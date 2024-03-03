@@ -21,7 +21,7 @@ for complete instructions on setup, install, administration, and use of
 * `docker-compose.yml`: Docker compose file for this Immich instance
 * `env-example`: Example `.env` for this Immich instance
 * `hwaccel.yml`: Hardware acceleration example for Intel architecture machines
-* `hwaccel-examples/hwaccel.ml.yml`: Hardware acceleration example
+* `hwaccel-examples/hwaccel.ml.yml`: Hardware machine learning acceleration example
 * `hwaccel-examples/hwaccel.transcoding.yml`: Hardware transcoding acceleration example
 * `immich_auto_album.py`: Python script used by `create-external-albums`
 * `start`: Convenience script to start the Immich server
@@ -37,6 +37,21 @@ Copy the `env-example` file to `.env` and edit to set your Immich database passw
 ```
 DB_PASSWORD=<Your-Immich-Database-Password>
 ```
+
+The example `env-example` has an external library path configured:
+
+```
+EXTERNAL_PATH=/u/Videos
+```
+
+This is used in conjunction with settings in `docker-compose.yml`:
+
+```
+    - ${EXTERNAL_PATH}:/usr/src/app/external
+```
+
+Either remove these external library settings or create an external library
+at `/u/Videos` on the same system as `Immich`.
 
 ### Cloudflare tunnel
 

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+python3 immich_auto_album.py \
+        /usr/src/app/external \
+        http://localhost:2283/api \
+        <Immich-API-Key>

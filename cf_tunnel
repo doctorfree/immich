@@ -1,0 +1,12 @@
+#!/bin/bash
+#
+# Name of this tunnel container
+CF_TUNNEL_NAME="immich-cf-tunnel"
+
+if [ "$1" == "stop" ]; then
+  sudo docker container stop ${CF_TUNNEL_NAME}
+else
+  sudo docker run -d --restart unless-stopped --name ${CF_TUNNEL_NAME} \
+    cloudflare/cloudflared:latest tunnel --no-autoupdate \
+    run --token <your-cloudflare-tunnel-token>
+fi

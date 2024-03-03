@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# Path to Immich library, thumbs, upload
+UPLOAD_LOCATION="/u/Immich"
+# If using borgsync, the name of the borgsync backup type in /etc/borgsync/
+BORGSYNC_TYPE="photos"
+# If using borg directly rather than borgsync
+BACKUP_PATH="/path/to/local/backup/directory"
+REMOTE_HOST="remote_host@IP"
+REMOTE_BACKUP_PATH="/path/to/remote/backup/directory"
+
+have_borg=$(type -p borg)
+have_borgsync=$(type -p borgsync)
+
+if [ "$1" == "init" ]; then
+  mkdir -p "${UPLOAD_LOCATION}/backups"
+  mkdir -p "${BACKUP_PATH}/immich-borg"
+  if [ "${have_borgsync}" ]; then
+    borgsync -b init -t ${BORGSYNC_TYPE}
+  else
+    if [ "${have_borg}" ]; then
+      borg init --encryption=none "${BACKUP_PATH}/immich-borg"
+      ## Remote set up
+      ssh "${REMOTE_HOST}" "mkdir ${REMOTE_BACKUP_PATH}/immich-borg"
+      ssh "${REMOTE_HOST}" "borg init --encryption=none ${REMOTE_BACKUP_PATH}/immich-borg"
+    else
+      printf "\nUnable to locate borgsync or borg - no Borg backup initialized\n"
+    fi
+  fi
+else
+  # Backup Immich database
+  docker exec -t immich_postgres pg_dumpall -c -U postgres | \
+         gzip > "${UPLOAD_LOCATION}/backups/dump-immich-pg.sql.gz"
+
+  if [ "${have_borgsync}" ]; then
+    borgsync -b create -t ${BORGSYNC_TYPE}
+  else
+    if [ "${have_borg}" ]; then
+      ### Append to local Borg repository
+      borg create ${BACKUP_PATH}/immich-borg::{now} ${UPLOAD_LOCATION} \
+          --exclude ${UPLOAD_LOCATION}/thumbs/ \
+          --exclude ${UPLOAD_LOCATION}/encoded-video/
+      borg prune --keep-weekly=4 --keep-monthly=3 ${BACKUP_PATH}/immich-borg
+      borg compact ${BACKUP_PATH}/immich-borg
+      ### Append to remote Borg repository
+      borg create ${REMOTE_HOST}:${REMOTE_BACKUP_PATH}/immich-borg::{now} \
+          ${UPLOAD_LOCATION} \
+          --exclude ${UPLOAD_LOCATION}/thumbs/ \
+          --exclude ${UPLOAD_LOCATION}/encoded-video/
+      borg prune --keep-weekly=4 --keep-monthly=3 \
+          ${REMOTE_HOST}:${REMOTE_BACKUP_PATH}/immich-borg
+      borg compact ${REMOTE_HOST}:${REMOTE_BACKUP_PATH}/immich-borg
+    else
+      printf "\nUnable to locate borgsync or borg - no Borg backup created\n"
+    fi
+  fi
+fi

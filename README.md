@@ -1,5 +1,16 @@
 # Immich Photo/Video Library Management
 
+This repository contains initial [Immich](https://immich.app) photo and video
+library management configuration and administration scripts. Included here are
+the [backup-immich-pg](backup-immich-pg) script to backup the `Immich`
+database and perform a `Borg` backup of the `Immich` library and the
+[create-external-albums](create-external-albums) script to create albums from
+an `Immich` external library.
+
+See the [Immich documentation](https://immich.app/docs/overview/introduction)
+for complete instructions on setup, install, administration, and use of
+[Immich](https://immich.app).
+
 ## Contents
 
 * `backup-immich-pg`: Backup Immich database and perform Borg backup of Immich library

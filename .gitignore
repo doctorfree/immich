@@ -1,6 +1,10 @@
 # Working dirs and test files
 test/*
 tmp/*
+update/docker-compose.yml
+update/example.env
+update/hwaccel.ml.yml
+update/hwaccel.transcoding.yml
 
 # vim files
 .*.sw[a-z]

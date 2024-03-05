@@ -1,0 +1,37 @@
+#!/bin/bash
+
+[ -f docker-compose.yml ] && mv docker-compose.yml docker-compose-prev.yml
+wget --quiet \
+  https://github.com/immich-app/immich/releases/latest/download/docker-compose.yml
+[ -f docker-compose-prev.yml ] && {
+  diff docker-compose.yml docker-compose-prev.yml > /dev/null && {
+    rm -f docker-compose-prev.yml
+  }
+}
+
+[ -f example.env ] && mv example.env example-prev.env
+wget --quiet \
+  https://github.com/immich-app/immich/releases/latest/download/example.env
+[ -f example-prev.env ] && {
+  diff example.env example-prev.env > /dev/null && {
+    rm -f example-prev.env
+  }
+}
+
+[ -f hwaccel.transcoding.yml ] && mv hwaccel.transcoding.yml hwaccel.transcoding-prev.yml
+wget --quiet \
+  https://github.com/immich-app/immich/releases/latest/download/hwaccel.transcoding.yml
+[ -f hwaccel.transcoding-prev.yml ] && {
+  diff hwaccel.transcoding.yml hwaccel.transcoding-prev.yml > /dev/null && {
+    rm -f hwaccel.transcoding-prev.yml
+  }
+}
+
+[ -f hwaccel.ml.yml ] && mv hwaccel.ml.yml hwaccel.ml-prev.yml
+wget --quiet \
+  https://github.com/immich-app/immich/releases/latest/download/hwaccel.ml.yml
+[ -f hwaccel.ml-prev.yml ] && {
+  diff hwaccel.ml.yml hwaccel.ml-prev.yml > /dev/null && {
+    rm -f hwaccel.ml-prev.yml
+  }
+}

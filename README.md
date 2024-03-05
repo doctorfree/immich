@@ -27,6 +27,7 @@ for complete instructions on setup, install, administration, and use of
 * `start`: Convenience script to start the Immich server
 * `stop`: Convenience script to stop the Immich server
 * `upgrade`: Convenience script to upgrade the Immich server
+* `update/get-docker-compose`: Convenience script to download the latest compose and env files
 
 ## Setup
 
